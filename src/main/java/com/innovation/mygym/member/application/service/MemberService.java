@@ -3,10 +3,12 @@ package com.innovation.mygym.member.application.service;
 import com.innovation.mygym.exception.exception.member.DuplicatePhoneException;
 import com.innovation.mygym.exception.exception.member.DuplicateUsernameException;
 import com.innovation.mygym.member.application.dto.CreateMemberRequestDto;
+import com.innovation.mygym.member.domain.entity.Member;
 import com.innovation.mygym.member.domain.repository.MemberRepository;
 import com.innovation.mygym.member.domain.vo.Phone;
 import com.innovation.mygym.member.domain.vo.Username;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void signUp(CreateMemberRequestDto createMemberRequestDto) {
@@ -30,7 +33,9 @@ public class MemberService {
         if (isDuplicatePhone(createMemberRequestDto)) {
             throw new DuplicatePhoneException();
         }
-        memberRepository.save(createMemberRequestDto.toEntity());
+        Member member = createMemberRequestDto.toEntity();
+        member.passwordEncrypt(passwordEncoder);
+        memberRepository.save(member);
     }
 
     @Transactional(readOnly = true)

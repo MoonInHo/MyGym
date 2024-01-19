@@ -26,6 +26,13 @@ dependencies {
     // Spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+    // DB
+    runtimeOnly 'com.h2database:h2'
+
     // ORM
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
@@ -39,8 +46,8 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // DB
-    runtimeOnly 'com.h2database:h2'
+    // Converter
+    implementation 'javax.xml.bind:jaxb-api:2.3.0'
 
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

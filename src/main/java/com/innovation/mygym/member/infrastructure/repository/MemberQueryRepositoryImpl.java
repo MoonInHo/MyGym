@@ -1,10 +1,13 @@
 package com.innovation.mygym.member.infrastructure.repository;
 
+import com.innovation.mygym.member.domain.entity.Member;
 import com.innovation.mygym.member.domain.vo.Phone;
 import com.innovation.mygym.member.domain.vo.Username;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 import static com.innovation.mygym.member.domain.entity.QMember.member;
 
@@ -30,5 +33,15 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                 .from(member)
                 .where(member.phone.eq(phone))
                 .fetchFirst() != null;
+    }
+
+    @Override
+    public Optional<Member> getMember(Username username) {
+        Member result = queryFactory
+                .selectFrom(member)
+                .where(member.username.eq(username))
+                .fetchOne();
+
+        return Optional.ofNullable(result);
     }
 }
