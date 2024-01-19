@@ -22,4 +22,8 @@ public class Username {
         }
         return new Username(username);
     }
+
+    public String username() {
+        return username;
+    }
 }

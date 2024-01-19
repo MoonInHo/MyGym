@@ -6,6 +6,11 @@ import com.innovation.mygym.member.domain.vo.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -41,15 +46,19 @@ public class Member { //TODO 각 필드의 형식 검증에 Bean validation 사�
 
     @Embedded
     @Column(nullable = false)
-    private Height height;
+    private Height height; //TODO 소수점 1자리 까지만 표기
 
     @Embedded
     @Column(nullable = false)
-    private Weight weight;
+    private Weight weight; //TODO 소수점 1자리 까지만 표기
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Grade grade;
+
+    @Embedded
+    @Column(nullable = false)
+    private Role role;
 
     private Member(
             Username username,
@@ -70,6 +79,7 @@ public class Member { //TODO 각 필드의 형식 검증에 Bean validation 사�
         this.height = height;
         this.weight = weight;
         this.grade = Grade.STARTER;
+        this.role = Role.of("ROLE_USER");
     }
 
     public static Member createMember(
@@ -83,5 +93,21 @@ public class Member { //TODO 각 필드의 형식 검증에 Bean validation 사�
             Weight weight
     ) {
         return new Member(username, password, name, age, gender, phone, height, weight);
+    }
+
+    public void passwordEncrypt(PasswordEncoder passwordEncoder) {
+        this.password = password.encodedPassword(passwordEncoder);
+    }
+
+    public List<GrantedAuthority> createRole() {
+        return Collections.singletonList(role.createRole());
+    }
+
+    public String username() {
+        return username.username();
+    }
+
+    public String password() {
+        return password.password();
     }
 }

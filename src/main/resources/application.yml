@@ -22,3 +22,6 @@ logging:
     org:
       hibernate:
         SQL: debug
+
+secret:
+  key: test.secret.key.abc
