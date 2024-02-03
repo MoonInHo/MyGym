@@ -5,6 +5,7 @@ spring:
     driver-class-name: org.h2.Driver
     hikari:
       maximum-pool-size: 50
+
   jpa:
     open-in-view: false
     hibernate:
@@ -12,6 +13,14 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  cache:
+    type: redis
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
 
 server:
   error:
@@ -23,5 +32,7 @@ logging:
       hibernate:
         SQL: debug
 
-secret:
-  key: test.secret.key.abc
+jwt:
+  secret-key: 1fbb154ceb5ad8f0cf24837f4c0a4f01777a0066baef8c21919f52c72f5db199
+  access-token-expire: 1800
+  refresh-token-expire: 1209600

@@ -2,6 +2,7 @@ package com.innovation.mygym.member.domain.entity;
 
 import com.innovation.mygym.member.domain.enums.Gender;
 import com.innovation.mygym.member.domain.enums.Grade;
+import com.innovation.mygym.member.domain.enums.Role;
 import com.innovation.mygym.member.domain.vo.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -56,7 +57,7 @@ public class Member { //TODO 각 필드의 형식 검증에 Bean validation 사�
     @Column(nullable = false)
     private Grade grade;
 
-    @Embedded
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
@@ -79,7 +80,7 @@ public class Member { //TODO 각 필드의 형식 검증에 Bean validation 사�
         this.height = height;
         this.weight = weight;
         this.grade = Grade.STARTER;
-        this.role = Role.of("ROLE_USER");
+        this.role = Role.ROLE_USER;
     }
 
     public static Member createMember(

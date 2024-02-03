@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationProvider implements AuthenticationProvider {
+public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
@@ -24,10 +24,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         String password = (String) authentication.getCredentials();
 
         AccountContext accountContext = (AccountContext) userDetailsService.loadUserByUsername(username);
-        if (!passwordEncoder.matches(password, accountContext.getPassword())) {
-            throw new BadCredentialsException("비밀번호가 일치 하지 않습니다.");
-        }
 
+        if (!passwordEncoder.matches(password, accountContext.getPassword())) {
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+        }
         return new UsernamePasswordAuthenticationToken(accountContext.getMember(), null, accountContext.getAuthorities());
     }
 

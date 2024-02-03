@@ -4,30 +4,49 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Component
-public class JwtUtil {
+public class JwtAuthProvider {
 
     private final String secretKey;
-    private final Long expireMs;
+    private final long accessTokenExpire;
+    private final long refreshTokenExpire;
 
-    public JwtUtil(@Value("{secret.key}") String secretKey) {
+    public JwtAuthProvider(
+            @Value("${jwt.secret-key}") String secretKey,
+            @Value("${jwt.access-token-expire}") long accessTokenExpire,
+            @Value("${jwt.refresh-token-expire}") long refreshTokenExpire
+            ) {
         this.secretKey = secretKey;
-        this.expireMs = 1000 * 60 * 60L;
+        this.accessTokenExpire = accessTokenExpire;
+        this.refreshTokenExpire = refreshTokenExpire;
     }
 
-    public String generateToken(String username) {
+    public String generateAccessToken(Authentication authentication) {
 
         Claims claims = Jwts.claims();
-        claims.put("username", username);
+        claims.put("username", authentication.getName());
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expireMs))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpire))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+    }
+
+    public String generateRefreshToken() {
+
+        Claims claims = Jwts.claims();
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpire))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
