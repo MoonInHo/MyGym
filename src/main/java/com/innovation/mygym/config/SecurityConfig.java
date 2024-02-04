@@ -1,5 +1,7 @@
 package com.innovation.mygym.config;
 
+import com.innovation.mygym.member.application.security.JwtAccessDeniedHandler;
+import com.innovation.mygym.member.application.security.JwtAuthenticationEntryPoint;
 import com.innovation.mygym.member.application.security.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,12 +25,17 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfiguration {
+public class SecurityConfig {
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     private final UserDetailsService userDetailsService;
 
-    @Value("${secret.key}")
-    private String secretKey;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -40,7 +47,6 @@ public class SecurityConfiguration {
         return new ProviderManager(providers);
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -48,13 +54,23 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/members/sign-up", "/api/members/sign-in").permitAll()
+                        .requestMatchers("/api/members/sign-up").permitAll()
+                        .requestMatchers( "/api/authentication/sign-in").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(
                         sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterBefore(new JwtFilter(userDetailsService, secretKey), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(
+                        exceptionHandling -> exceptionHandling
+                                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                                .accessDeniedHandler(jwtAccessDeniedHandler)
+                )
+                .addFilterBefore(
+                        new JwtFilter(userDetailsService, secretKey),
+                        UsernamePasswordAuthenticationFilter.class
+                )
+
         ;
 
         return http.build();

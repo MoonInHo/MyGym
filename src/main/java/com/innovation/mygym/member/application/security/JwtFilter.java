@@ -18,10 +18,15 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
+
     private final String secretKey;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
@@ -32,12 +37,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = authorization.split(" ")[1];
 
-        if (JwtUtil.isExpired(token, secretKey)) {
+        if (JwtAuthProvider.isExpired(token, secretKey)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String username = JwtUtil.getUsername(token, secretKey);
+        String username = JwtAuthProvider.getUsername(token, secretKey);
         AccountContext accountContext = (AccountContext) userDetailsService.loadUserByUsername(username);
 
         UsernamePasswordAuthenticationToken authenticationToken =
@@ -48,7 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isInvalidAuthorization(String authorization) {
+    private Boolean isInvalidAuthorization(String authorization) {
         return authorization == null || !authorization.startsWith("Bearer ");
     }
 }
