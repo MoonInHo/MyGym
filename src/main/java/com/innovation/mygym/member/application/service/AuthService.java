@@ -1,5 +1,6 @@
-package com.innovation.mygym.member.application.security;
+package com.innovation.mygym.member.application.service;
 
+import com.innovation.mygym.member.application.security.JwtAuthProvider;
 import com.innovation.mygym.member.domain.entity.RefreshToken;
 import com.innovation.mygym.member.domain.repository.RefreshTokenRepository;
 import com.innovation.mygym.member.presentation.dto.SignInRequestDto;

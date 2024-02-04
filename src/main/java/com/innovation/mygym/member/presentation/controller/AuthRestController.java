@@ -1,6 +1,6 @@
 package com.innovation.mygym.member.presentation.controller;
 
-import com.innovation.mygym.member.application.security.AuthService;
+import com.innovation.mygym.member.application.service.AuthService;
 import com.innovation.mygym.member.presentation.dto.SignInRequestDto;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
