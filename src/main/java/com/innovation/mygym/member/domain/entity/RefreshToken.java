@@ -1,25 +1,19 @@
 package com.innovation.mygym.member.domain.entity;
 
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
 
-@RedisHash(value = "refreshToken", timeToLive = 1209600) //TODO 토큰이 만료된 뒤 삭제 되지않고 남은 key 들을 정리할 방법 찾아보기
+@RedisHash(value = "refreshToken", timeToLive = 1209600)
+@NoArgsConstructor
 public class RefreshToken {
 
     @Id
-    private String id;
-
+    private Long memberId;
     private String refreshToken;
 
-    @Indexed
-    private String accessToken;
-
-    public RefreshToken(
-            String refreshToken,
-            String accessToken
-    ) {
+    public RefreshToken(Long memberId, String refreshToken) {
+        this.memberId = memberId;
         this.refreshToken = refreshToken;
-        this.accessToken = accessToken;
     }
 }

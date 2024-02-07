@@ -21,6 +21,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         Member member = memberRepository.getMember(Username.of(username))
                 .orElseThrow(() -> new UsernameNotFoundException("사용자 정보를 다시 확인해주세요."));
 
-        return new AccountContext(member, member.createRole());
+        return new AccountContext(username, member.password(), member.createRole(), member.id());
     }
 }
