@@ -34,7 +34,7 @@ public class JwtAuthProvider {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpire))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60L))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
@@ -67,4 +67,5 @@ public class JwtAuthProvider {
                 .getBody()
                 .get("username", String.class);
     }
+    //TODO resolveAccessToken 구현하기
 }

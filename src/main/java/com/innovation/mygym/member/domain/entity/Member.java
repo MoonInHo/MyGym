@@ -104,6 +104,10 @@ public class Member { //TODO 각 필드의 형식 검증에 Bean validation 사�
         return Collections.singletonList(role.createRole());
     }
 
+    public Long id() {
+        return id;
+    }
+
     public String username() {
         return username.username();
     }

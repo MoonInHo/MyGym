@@ -28,7 +28,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (!passwordEncoder.matches(password, accountContext.getPassword())) {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
-        return new UsernamePasswordAuthenticationToken(accountContext.getMember(), null, accountContext.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(accountContext, null, accountContext.getAuthorities());
     }
 
     @Override
