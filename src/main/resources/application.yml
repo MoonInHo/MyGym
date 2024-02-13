@@ -34,5 +34,3 @@ logging:
 
 jwt:
   secret-key: 1fbb154ceb5ad8f0cf24837f4c0a4f01777a0066baef8c21919f52c72f5db199
-  access-token-expire: 1800
-  refresh-token-expire: 1209600

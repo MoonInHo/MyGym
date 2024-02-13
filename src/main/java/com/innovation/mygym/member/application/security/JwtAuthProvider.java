@@ -13,28 +13,27 @@ import java.util.Date;
 public class JwtAuthProvider {
 
     private final String secretKey;
-    private final long accessTokenExpire;
-    private final long refreshTokenExpire;
+    private final int accessTokenExpire;
+    private final int refreshTokenExpire;
 
-    public JwtAuthProvider(
-            @Value("${jwt.secret-key}") String secretKey,
-            @Value("${jwt.access-token-expire}") long accessTokenExpire,
-            @Value("${jwt.refresh-token-expire}") long refreshTokenExpire
-            ) {
+    public JwtAuthProvider(@Value("${jwt.secret-key}") String secretKey) {
         this.secretKey = secretKey;
-        this.accessTokenExpire = accessTokenExpire;
-        this.refreshTokenExpire = refreshTokenExpire;
+        this.accessTokenExpire = 1000 * 60 * 30;
+        this.refreshTokenExpire = 1000 * 60 * 60 * 24 * 14;
     }
 
     public String generateAccessToken(Authentication authentication) {
 
+        AccountContext accountContext = (AccountContext) authentication.getPrincipal();
+
         Claims claims = Jwts.claims();
-        claims.put("username", authentication.getName());
+        claims.put("username", accountContext.getUsername());
+        claims.put("userId", accountContext.getMemberId());
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60L))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpire))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
@@ -67,5 +66,12 @@ public class JwtAuthProvider {
                 .getBody()
                 .get("username", String.class);
     }
-    //TODO resolveAccessToken 구현하기
+
+    public Long getUserId(String token) {
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody()
+                .get("userId", Long.class);
+    }
 }
