@@ -9,4 +9,7 @@ public enum ErrorCode {
     // Member
     DUPLICATE_USERNAME_ERROR,
     DUPLICATE_PHONE_ERROR,
+
+    // Authorization
+    EXPIRED_REFRESH_TOKEN_ERROR,
 }
