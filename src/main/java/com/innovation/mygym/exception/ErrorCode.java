@@ -10,7 +10,7 @@ public enum ErrorCode {
 
     // Member
     DUPLICATE_USERNAME("해당 아이디가 이미 존재합니다."),
-    DUPLICATE_PHONE("해당 연락처로 가입 정보가 이미 존재합니다."),
+    DUPLICATE_PHONE("해당 연락처로 가입 정보가 존재합니다."),
 
     // Authorization
     EXPIRED_ACCESS_TOKEN("액세스 토큰이 만료 되었거나 존재하지 않습니다."),
