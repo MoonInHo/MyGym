@@ -7,6 +7,6 @@ import org.springframework.http.HttpStatus;
 public class ExpiredRefreshTokenException extends ApplicationException {
 
     public ExpiredRefreshTokenException() {
-        super(HttpStatus.UNAUTHORIZED, ErrorCode.EXPIRED_REFRESH_TOKEN_ERROR, "리프레시 토큰이 존재하지 않거나 만료되었습니다.");
+        super(HttpStatus.UNAUTHORIZED, ErrorCode.EXPIRED_REFRESH_TOKEN, "리프레시 토큰이 존재하지 않거나 만료되었습니다.");
     }
 }

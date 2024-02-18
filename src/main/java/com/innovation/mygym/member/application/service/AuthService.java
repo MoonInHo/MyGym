@@ -13,10 +13,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
+    private final String GRANT_TYPE = "Bearer";
 
     private final AuthenticationManager authenticationManager;
     private final JwtAuthProvider jwtAuthProvider;
@@ -43,13 +46,25 @@ public class AuthService {
     @Transactional
     public void signOut(String authorizationHeader) {
 
-        String accessToken = authorizationHeader.substring(7);
+        String accessToken = resolveToken(authorizationHeader);
 
         Long memberId = jwtAuthProvider.getUserId(accessToken);
-        if (!isRefreshTokenExist(memberId)) {
-            throw new ExpiredRefreshTokenException();
-        }
+        validateRefreshTokenExistence(memberId);
+
         refreshTokenRepository.deleteById(memberId);
+    }
+
+    @Transactional
+    public TokenDto reissue(String authorizationHeader) {
+
+        String accessToken = resolveToken(authorizationHeader);
+
+        Long memberId = jwtAuthProvider.getUserId(accessToken);
+        validateRefreshTokenExistence(memberId);
+
+        Authentication authentication = jwtAuthProvider.getAuthentication(accessToken);
+
+        return new TokenDto(jwtAuthProvider.generateAccessToken(authentication), null);
     }
 
     private Authentication getAuthentication(SignInRequestDto signInRequestDto) {
@@ -68,5 +83,18 @@ public class AuthService {
 
     private boolean isRefreshTokenExist(Long memberId) {
         return refreshTokenRepository.existsById(memberId);
+    }
+
+    private void validateRefreshTokenExistence(Long memberId) {
+        if (!isRefreshTokenExist(memberId)) {
+            throw new ExpiredRefreshTokenException();
+        }
+    }
+
+    private String resolveToken(String authorizationHeader) {
+        if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith(GRANT_TYPE)) {
+            return authorizationHeader.substring(7);
+        }
+        return null;
     }
 }

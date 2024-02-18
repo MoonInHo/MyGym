@@ -1,5 +1,6 @@
 package com.innovation.mygym.config;
 
+import com.innovation.mygym.exception.handler.filter.ExceptionHandlerFilter;
 import com.innovation.mygym.member.application.security.JwtAccessDeniedHandler;
 import com.innovation.mygym.member.application.security.JwtAuthenticationEntryPoint;
 import com.innovation.mygym.member.application.security.JwtFilter;
@@ -67,10 +68,11 @@ public class SecurityConfig {
                                 .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
                 .addFilterBefore(
-                        new JwtFilter(userDetailsService, secretKey),
-                        UsernamePasswordAuthenticationFilter.class
+                        new JwtFilter(userDetailsService, secretKey), UsernamePasswordAuthenticationFilter.class
                 )
-
+                .addFilterBefore(
+                        new ExceptionHandlerFilter(), JwtFilter.class
+                )
         ;
 
         return http.build();
